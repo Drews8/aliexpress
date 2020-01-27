@@ -52,10 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderCard = items => {
         goodsWrapper.textContent = '';
-        items.forEach((item) => {
-            const { id, title, price, imgMin} = item;
-            goodsWrapper.append(createCardGoods(id, title, price, imgMin));
-        });
+        if(items.length) {
+            items.forEach((item) => {
+                const {id, title, price, imgMin} = item;
+                goodsWrapper.append(createCardGoods(id, title, price, imgMin));
+            });
+        } else {
+            goodsWrapper.textContent = "Извините, мы не нашли товаров по вашему запросу 😔"
+        }
     };
 
     const randomSort = items => {
@@ -80,11 +84,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.classList.contains('category-item')) {
             const categoryName = target.dataset.category;
             getGoods(renderCard, goods => {
-                    return goods.filter(item => item.category.includes(categoryName));
+                return goods.filter(item => item.category.includes(categoryName));
             });
         }
-        
+
     };
+
+    const searchGoods = event => {
+        event.preventDefault();
+
+        const input = event.target.elements.searchGoods;
+        const inputValue = input.value.trim();
+
+        if (inputValue !== '') {
+            const searchString = new RegExp(inputValue, 'i');
+            getGoods(renderCard, goods => goods.filter(item => searchString.test(item.title)));
+        } else {
+            search.classList.add('error');
+            setTimeout(() => {
+                search.classList.remove('error');
+            }, 2000);
+        }
+        input.value = '';
+    }
 
 
     cartBtn.addEventListener('click', openCart);
