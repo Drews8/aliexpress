@@ -7,7 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const cart = document.querySelector('.cart');
     const category = document.querySelector('.category');
 
-
+    const loader = () => {
+        goodsWrapper.innerHTML = `<div id="pre-loader">
+                                    <img src="img/spinner.svg">
+                                  </div>`
+    };
 
     const createCardGoods = (id, title, price, img) => {
         const card = document.createElement('div');
@@ -60,10 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const getGoods = (handler, filter) => {
+        loader();
+
         fetch('db/db.json')
             .then(response => response.json())
             .then(filter)
             .then(handler);
+
     };
 
     const choiceCategory = event => {
@@ -83,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cartBtn.addEventListener('click', openCart);
     cart.addEventListener('click', closeCart);
     category.addEventListener('click', choiceCategory);
+    search.addEventListener('submit', searchGoods);
 
     getGoods(renderCard, randomSort);
 });
