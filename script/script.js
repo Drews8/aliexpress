@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cart = document.querySelector('.cart');
     const category = document.querySelector('.category');
 
+    const wishlist = [];
+
     const loader = () => {
         goodsWrapper.innerHTML = `<div id="pre-loader">
                                     <img src="img/spinner.svg">
@@ -19,7 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
         card.innerHTML = `<div class="card">
                                 <div class="card-img-wrapper">
                                     <img class="card-img-top" src="${img}" alt="">
-                                     <button class="card-add-wishlist" data-goods-id="${id}"></button>
+                                     <button class="card-add-wishlist ${wishlist.includes(id) ? 'active' : ''}" 
+                                        data-goods-id="${id}"></button>
                                 </div>
                                 <div class="card-body justify-content-between">
                                     <a href="#" class="card-title">${title}</a>
@@ -52,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderCard = items => {
         goodsWrapper.textContent = '';
-        if(items.length) {
+        if (items.length) {
             items.forEach((item) => {
                 const {id, title, price, imgMin} = item;
                 goodsWrapper.append(createCardGoods(id, title, price, imgMin));
@@ -108,11 +111,31 @@ document.addEventListener('DOMContentLoaded', () => {
         input.value = '';
     }
 
+    const handlerGoods = event => {
+        const target = event.target;
+
+        if (target.classList.contains('card-add-wishlist')) {
+            toogleWishlist(target.dataset.goodsId, target);
+        }
+    };
+
+    const toogleWishlist = (id, elem) => {
+        elem.classList.toggle('active');
+
+        if (wishlist.indexOf(id) + 1) {
+            wishlist.splice(wishlist.indexOf(id), 1);
+
+        } else {
+            wishlist.push(id);
+        }
+
+    };
 
     cartBtn.addEventListener('click', openCart);
     cart.addEventListener('click', closeCart);
     category.addEventListener('click', choiceCategory);
     search.addEventListener('submit', searchGoods);
+    goodsWrapper.addEventListener('click', handlerGoods);
 
     getGoods(renderCard, randomSort);
 });
